@@ -22,8 +22,10 @@
 class SI_Rave extends SI_Offsite_Processors {
 	const MODE_TEST = 'staging';
 	const MODE_LIVE = 'live';
-	const API_SECRET_KEY_OPTION = 'si_rave_secret_key';
-	const API_PUB_KEY_OPTION = 'si_rave_pub_key';
+	const API_LIVE_SECRET_KEY_OPTION = 'si_rave_live_secret_key';
+	const API_LIVE_PUB_KEY_OPTION = 'si_rave_live_pub_key';
+	const API_TEST_SECRET_KEY_OPTION = 'si_rave_test_secret_key';
+	const API_TEST_PUB_KEY_OPTION = 'si_rave_test_pub_key';
 	const API_ENDPOINT_STAGING = 'https://rave-api-v2.herokuapp.com';
 	const API_ENDPOINT_LIVE = 'https://api.ravepay.co';
 
@@ -53,8 +55,10 @@ class SI_Rave extends SI_Offsite_Processors {
 	private static $token;
 	protected static $api_mode = self::MODE_TEST;
 	private static $logo;
-	private static $secretkey;
-	private static $publickey;
+	private static $livesecretkey;
+	private static $livepublickey;
+	private static $testsecretkey;
+	private static $testpublickey;
 	private static $cancel_url = '';
 	private static $apiPaymentMethod;
 	private static $country;
@@ -116,8 +120,13 @@ class SI_Rave extends SI_Offsite_Processors {
 		parent::__construct();
 		$this->requeryCount = 0;
 		$this->raveResponse=null;
-		self::$publickey = get_option( self::API_PUB_KEY_OPTION );
-		self::$secretkey = get_option( self::API_SECRET_KEY_OPTION );
+		if (self::$api_mode === self::MODE_LIVE) {
+			self::$livepublickey = get_option(self::API_LIVE_PUB_KEY_OPTION);
+			self::$livesecretkey = get_option(self::API_LIVE_SECRET_KEY_OPTION);
+		} else {
+			self::$testpublickey = get_option(self::API_TEST_PUB_KEY_OPTION);
+			self::$testsecretkey = get_option(self::API_TEST_SECRET_KEY_OPTION);
+		}
 		self::$logo = get_option( self::LOGO );
 		self::$apiPaymentMethod = get_option( self::API_PAYMENT_METHOD );
 		self::$country = get_option( self::COUNTRY );
@@ -153,7 +162,7 @@ class SI_Rave extends SI_Offsite_Processors {
 		// Settings
 		$settings = array(
 			'si_rave_settings' => array(
-				'title' => __( 'Rave', 'sprout-invoices' ),
+				'title' => __( 'Rave Settings', 'sprout-invoices' ),
 				'weight' => 200,
 				'tab' => self::get_settings_page( false ),
 				'settings' => array(
@@ -168,20 +177,34 @@ class SI_Rave extends SI_Offsite_Processors {
 							'default' => self::$api_mode,
 							),
 						),
-					self::API_PUB_KEY_OPTION => array(
-						'label' => __( 'Rave Public Key', 'sprout-invoices' ),
+					self::API_LIVE_PUB_KEY_OPTION => array(
+						'label' => __('Rave Live Public Key', 'sprout-invoices'),
 						'option' => array(
 							'type' => 'text',
-							'default' => self::$publickey,
-							),
+							'default' => self::$livepublickey,
 						),
-					self::API_SECRET_KEY_OPTION => array(
-						'label' => __( 'Rave Secret Key', 'sprout-invoices' ),
+					),
+					self::API_LIVE_SECRET_KEY_OPTION => array(
+						'label' => __('Rave Live Secret Key', 'sprout-invoices'),
 						'option' => array(
 							'type' => 'text',
-							'default' => self::$secretkey,
-							),
+							'default' => self::$livesecretkey,
 						),
+					),
+					self::API_TEST_PUB_KEY_OPTION => array(
+						'label' => __('Rave Test Public Key', 'sprout-invoices'),
+						'option' => array(
+							'type' => 'text',
+							'default' => self::$testpublickey,
+						),
+					),
+					self::API_TEST_SECRET_KEY_OPTION => array(
+						'label' => __('Rave Test Secret Key', 'sprout-invoices'),
+						'option' => array(
+							'type' => 'text',
+							'default' => self::$testsecretkey,
+						),
+					),
 					self::API_PAYMENT_METHOD => array(
 						'label' => __( 'Payment Method' , 'sprout-invoices' ),
 						'option' => array(
@@ -254,8 +277,13 @@ class SI_Rave extends SI_Offsite_Processors {
 			$user_email = ( $user ) ? $user->user_email : '' ;
       
 			$redirectURL = $checkout->checkout_complete_url( $this->get_slug() );
-			$publicKey = self::$publickey; // Remember to change this to your live public keys when going live
-			$secretKey = self::$secretkey; // Remember to change this to your live secret keys when going live
+			if (self::$api_mode == 'staging') {
+				$publicKey = self::$testpublickey;
+				$secretKey = self::$testsecretkey;
+			} else {
+				$publicKey = self::$livepublickey;
+				$secretKey = self::$livesecretkey;
+			}
 			$baseUrl = self::get_api_url();
 
 			$invoice_id = get_the_id();
@@ -332,12 +360,13 @@ class SI_Rave extends SI_Offsite_Processors {
 
 	function requery(SI_Checkouts $checkout)
 	{	
-
-		$secretKey = self::$secretkey; // Remember to change this to your live secret keys when going live
+		
 		if (self::$api_mode == 'staging') {
 			$apiLink = "http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/";
+			$secretKey = self::$testsecretkey;
 		}else{
 			$apiLink = "https://api.ravepay.co/";
+			$secretKey = self::$livesecretkey;
 		}
 	    $txref = $_REQUEST['txref'];
 	    $this->requeryCount++;
