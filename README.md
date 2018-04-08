@@ -13,7 +13,8 @@ This is a wordpress payment gateway plugin for Wordpress Sprout Invoice that all
 
 Accept Credit card, Debit card and Bank account payment on Sprout Invoice with the Rave payment gateway.
 
-Signup for an account [here](https://rave.flutterwave.com)
+> Signup for a live account [here](https://rave.flutterwave.com)
+> Signup for a test account [here](https://raveappv2.herokuapp.com/)
 
 Rave is available in:
 
