@@ -120,13 +120,10 @@ class SI_Rave extends SI_Offsite_Processors {
 		parent::__construct();
 		$this->requeryCount = 0;
 		$this->raveResponse=null;
-		if (self::$api_mode === self::MODE_LIVE) {
-			self::$livepublickey = get_option(self::API_LIVE_PUB_KEY_OPTION);
-			self::$livesecretkey = get_option(self::API_LIVE_SECRET_KEY_OPTION);
-		} else {
-			self::$testpublickey = get_option(self::API_TEST_PUB_KEY_OPTION);
-			self::$testsecretkey = get_option(self::API_TEST_SECRET_KEY_OPTION);
-		}
+		self::$livepublickey = get_option(self::API_LIVE_PUB_KEY_OPTION);
+		self::$livesecretkey = get_option(self::API_LIVE_SECRET_KEY_OPTION);
+		self::$testpublickey = get_option(self::API_TEST_PUB_KEY_OPTION);
+		self::$testsecretkey = get_option(self::API_TEST_SECRET_KEY_OPTION);
 		self::$logo = get_option( self::LOGO );
 		self::$apiPaymentMethod = get_option( self::API_PAYMENT_METHOD );
 		self::$country = get_option( self::COUNTRY );
