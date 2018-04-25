@@ -109,7 +109,7 @@ class SI_Rave extends SI_Offsite_Processors {
 
 	public static function checkout_options() {
 		$option = array(
-			'icons' => array( 'https://cdn-images-1.medium.com/max/1064/1*9Ns-5XIj1xgGFgZ8t_KkZw.png' ),
+			'icons' => array( 'http://res.cloudinary.com/datablock123452018/image/upload/v1523744197/rave.png' ),
 			'label' => __( 'Rave', 'sprout-invoices' ),
 			'cc' => array(),
 			);
@@ -226,22 +226,7 @@ class SI_Rave extends SI_Offsite_Processors {
 								),
 							'default' => self::$country,
 							)
-						),
-					self::CURRENCY_CODE_OPTION => array(
-						'label' => __( 'Currency Code', 'sprout-invoices' ),
-						'option' => array(
-							'type' => 'text',
-							'default' => self::$currency_code,
-							'attributes' => array( 'class' => 'small-text' ),
-							),
-						),
-					self::CANCEL_URL_OPTION => array(
-						'label' => __( 'Cancel URL', 'sprout-invoices' ),
-						'option' => array(
-							'type' => 'text',
-							'default' => self::$cancel_url,
-							),
-						),
+						)
 					),
 				),
 			);
