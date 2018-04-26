@@ -38,6 +38,13 @@ class SI_Rave extends SI_Offsite_Processors {
 	const COUNTRY_GHANA = "GH";
 	const COUNTRY_KENYA = "KE";
 
+	const CURRENCY_NGN = "NGN";
+	const CURRENCY_GHS = "GHS";
+	const CURRENCY_KES = "KES";
+	const CURRENCY_ZAR = "ZAR";
+	const CURRENCY_USD = "USD";
+	const CURRENCY_GBP = "GBP";
+
 	const REQUERY_COUNT = 0;
 
 	const LOGO = 'si_rave_logo';
@@ -205,7 +212,7 @@ class SI_Rave extends SI_Offsite_Processors {
 					self::API_PAYMENT_METHOD => array(
 						'label' => __( 'Payment Method' , 'sprout-invoices' ),
 						'option' => array(
-							'type' => 'radios',
+							'type' => 'select',
 							'options' => array(
 								self::PAYMENT_ALL => __( 'All' , 'sprout-invoices' ),
 								self::PAYMENT_ACCOUNT => __( 'Account Only' , 'sprout-invoices' ),
@@ -218,7 +225,7 @@ class SI_Rave extends SI_Offsite_Processors {
 					self::COUNTRY => array(
 						'label' => __( 'Payment Method' , 'sprout-invoices' ),
 						'option' => array(
-							'type' => 'radios',
+							'type' => 'select',
 							'options' => array(
 								self::COUNTRY_NIGERIA => __( 'Nigeria' , 'sprout-invoices' ),
 								self::COUNTRY_KENYA => __( 'Kenya' , 'sprout-invoices' ),
@@ -226,7 +233,23 @@ class SI_Rave extends SI_Offsite_Processors {
 								),
 							'default' => self::$country,
 							)
-						)
+						),
+					self::CURRENCY_CODE_OPTION => array(
+						'label' => __( 'Currency Code', 'sprout-invoices' ),
+						'option' => array(
+							'type' => 'select',
+							'options' => array(
+								self::CURRENCY_NGN => __( 'NGN' , 'sprout-invoices' ),
+								self::CURRENCY_KES => __( 'KES' , 'sprout-invoices' ),
+								self::CURRENCY_GHS => __( 'GHS' , 'sprout-invoices' ),
+								self::CURRENCY_USD => __( 'USD' , 'sprout-invoices' ),
+								self::CURRENCY_GBP => __( 'GBP' , 'sprout-invoices' ),
+								self::CURRENCY_ZAR => __( 'ZAR' , 'sprout-invoices' ),
+							),
+							'default' => self::$currency_code,
+							'attributes' => array( 'class' => 'small-text' ),
+							),
+						),
 					),
 				),
 			);
