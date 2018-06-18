@@ -1,7 +1,7 @@
 # Wordpress Sprout Invoice Rave Payment Plugin
 This is a wordpress payment gateway plugin for Wordpress Sprout Invoice that allows you to accept payments on your invoice using Flutterwave's Rave
  - **Contributors:** Oluwole Adebiyi (KingFlamez)
- - **Tags:** rave, flutterwave, payment gateway, bank account, credit card, debit card, nigeria, kenya, ghana, international, mastercard, visa, KES, GHC, NGN, Sprout Invoice, Wordpress.
+ - **Tags:** rave, flutterwave, payment gateway, bank account, credit card, debit card, nigeria, kenya, ghana, south africa, africa, international, mastercard, visa, KES, GHC, NGN, ZAR, Sprout Invoice, Wordpress.
 
 
 ## Requirements
@@ -21,6 +21,7 @@ Rave is available in:
 * __Nigeria__
 * __Ghana__
 * __Kenya__
+* __South Africa__
 
 ## Install
 1. Download the Zip file of this plugin.
