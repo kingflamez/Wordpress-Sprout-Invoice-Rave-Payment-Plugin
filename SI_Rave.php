@@ -37,6 +37,7 @@ class SI_Rave extends SI_Offsite_Processors {
 	const COUNTRY_NIGERIA = "NG";
 	const COUNTRY_GHANA = "GH";
 	const COUNTRY_KENYA = "KE";
+	const COUNTRY_SOUTH_AFRICA = "ZA";
 
 	const CURRENCY_NGN = "NGN";
 	const CURRENCY_GHS = "GHS";
@@ -228,8 +229,9 @@ class SI_Rave extends SI_Offsite_Processors {
 							'type' => 'select',
 							'options' => array(
 								self::COUNTRY_NIGERIA => __( 'Nigeria' , 'sprout-invoices' ),
-								self::COUNTRY_KENYA => __( 'Kenya' , 'sprout-invoices' ),
-								self::COUNTRY_GHANA => __( 'Ghana' , 'sprout-invoices' ),
+								self::COUNTRY_KENYA => __( 'Kenya' , 'sprout-invoices' ), 
+								self::COUNTRY_GHANA => __('Ghana', 'sprout-invoices'),
+								self::COUNTRY_SOUTH_AFRICA => __('South Africa', 'sprout-invoices'),
 								),
 							'default' => self::$country,
 							)
