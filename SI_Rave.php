@@ -26,7 +26,7 @@ class SI_Rave extends SI_Offsite_Processors {
 	const API_LIVE_PUB_KEY_OPTION = 'si_rave_live_pub_key';
 	const API_TEST_SECRET_KEY_OPTION = 'si_rave_test_secret_key';
 	const API_TEST_PUB_KEY_OPTION = 'si_rave_test_pub_key';
-	const API_ENDPOINT_STAGING = 'https://rave-api-v2.herokuapp.com';
+	const API_ENDPOINT_STAGING = 'https://ravesandboxapi.flutterwave.com';
 	const API_ENDPOINT_LIVE = 'https://api.ravepay.co';
 
 	const PAYMENT_ALL = "both";
@@ -367,7 +367,7 @@ class SI_Rave extends SI_Offsite_Processors {
 	{	
 		
 		if (self::$api_mode == 'staging') {
-			$apiLink = "http://flw-pms-dev.eu-west-1.elasticbeanstalk.com/";
+			$apiLink = "https://ravesandboxapi.flutterwave.com/";
 			$secretKey = self::$testsecretkey;
 		}else{
 			$apiLink = "https://api.ravepay.co/";
@@ -384,7 +384,7 @@ class SI_Rave extends SI_Offsite_Processors {
 	    // make request to endpoint.
 	    $data_string = json_encode($data);
 	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL, $apiLink . 'flwv3-pug/getpaidx/api/xrequery');
+	    curl_setopt($ch, CURLOPT_URL, $apiLink . 'flwv3-pug/getpaidx/api/v2/verify');
 	    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 	    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
 	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
