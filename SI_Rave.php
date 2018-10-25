@@ -4,6 +4,11 @@ class SI_Rave extends SI_Offsite_Processors
 {
     const MODE_TEST = 'test';
     const MODE_LIVE = 'live';
+
+    const CURRENCY_NIGERIA ='NGN';
+    const CURRENCY_KENYA ='KES';
+    const CURRENCY_GHANA ='GHS';
+    const CURRENCY_SOUTHAFRICA ='ZAR';
     
     const COUNTRY_NIGERIA = 'NG';
     const COUNTRY_KENYA = 'KE';
@@ -14,7 +19,12 @@ class SI_Rave extends SI_Offsite_Processors
     const DISABLE_JS_OPTION = 'si_use_rave_js';
     const API_SECRET_KEY_OPTION = 'si_rave_secret_key';
     const API_SECRET_KEY_TEST_OPTION = 'si_rave_secret_key_test';
+    const MODAL_TITLE = 'si_rave_modal_title';
+    const MODAL_DESCRIPTION = 'si_rave_modal_description';
     const LOGO_URL = 'si_rave_logo';
+    const META_NAME = 'si_rave_metaname';
+    const META_VALUE = 'si_rave_metavalue';
+    const PAYMENT_PLAN = 'si_rave_payment_plan';
     const API_PUB_KEY_OPTION = 'si_rave_pub_key';
     const API_PUB_KEY_TEST_OPTION = 'si_rave_pub_key_test';
 
@@ -34,10 +44,15 @@ class SI_Rave extends SI_Offsite_Processors
     private static $payment_modal;
     private static $disable_rave_js;
     private static $api_secret_key_test;
+    private static $modal_title;
+    private static $modal_desc;
     private static $logo_url;
+    private static $paymentplan_id;
     private static $api_pub_key_test;
     private static $api_secret_key;
     private static $api_pub_key;
+    private static $meta_name;
+    private static $meta_value;
     private static $currency_code = 'NGN';
     private static $country_code = 'NG';
     private static $stagingUrl = 'https://ravesandboxapi.flutterwave.com';
@@ -115,7 +130,12 @@ class SI_Rave extends SI_Offsite_Processors
         self::$api_secret_key = get_option(self::API_SECRET_KEY_OPTION, '');
         self::$api_pub_key = get_option(self::API_PUB_KEY_OPTION, '');
         self::$api_secret_key_test = get_option(self::API_SECRET_KEY_TEST_OPTION, '');
+        self::$modal_title = get_option(self::MODAL_TITLE, '');
+        self::$modal_desc = get_option(self::MODAL_DESCRIPTION, '');
         self::$logo_url = get_option(self::LOGO_URL, '');
+        self::$meta_name = get_option(self::META_NAME, '');
+        self::$meta_value = get_option(self::META_VALUE, '');
+        self::$paymentplan_id = get_option(self::PAYMENT_PLAN, '');
         self::$api_pub_key_test = get_option(self::API_PUB_KEY_TEST_OPTION, '');
 
 		add_action( 'si_checkout_action_'.SI_Checkouts::PAYMENT_PAGE, array( $this, 'send_offsite' ), 0, 1 );
@@ -192,6 +212,20 @@ class SI_Rave extends SI_Offsite_Processors
                             'default' => self::$api_secret_key_test,
                         )
                     ),
+                    self::MODAL_TITLE => array(
+                        'label' => __('Modal Title', 'sprout-invoices'),
+                        'option' => array(
+                            'type' => 'text',
+                            'default' => self::$modal_title,
+                        )
+                    ),
+                    self::MODAL_DESCRIPTION => array(
+                        'label' => __('Modal Description', 'sprout-invoices'),
+                        'option' => array(
+                            'type' => 'text',
+                            'default' => self::$modal_desc,
+                        )
+                    ),
                     self::LOGO_URL => array(
                         'label' => __('Logo URL (Square preferably)', 'sprout-invoices'),
                         'option' => array(
@@ -199,12 +233,25 @@ class SI_Rave extends SI_Offsite_Processors
                             'default' => self::$logo_url,
                         )
                     ),
-                    self::CURRENCY_CODE_OPTION => array(
-                        'label' => __('Currency Code', 'sprout-invoices'),
+                    self::PAYMENT_PLAN => array(
+                        'label' => __('Payment Plan ID (optional)', 'sprout-invoices'),
                         'option' => array(
                             'type' => 'text',
+                            'default' => self::$paymentplan_id,
+                        )
+                    ),
+                    self::CURRENCY_CODE_OPTION => array(
+                        'label' => __('Currency Code (NOTE: Double check to ensure the currency chosen below matches with the set invoice currency, to avoid conflict. Sprout Invoices->General Settings->Advanced)', 'sprout-invoices'),
+                        'option' => array(
+                            'type' => 'select',
+                            'options' => array(
+                                self::CURRENCY_NIGERIA => __('NGN', 'sprout-invoices'),
+                                self::CURRENCY_KENYA => __('KES', 'sprout-invoices'),
+                                self::CURRENCY_GHANA => __('GHS', 'sprout-invoices'),
+                                self::CURRENCY_SOUTHAFRICA => __('ZAR', 'sprout-invoices')
+                            ),
                             'default' => self::$currency_code,
-                            'attributes' => array( 'class' => 'small-text' )
+                            // 'attributes' => array( 'class' => 'small-text' )
                         )
                     ),
                     self::COUNTRY_OPTION => array(
@@ -218,7 +265,21 @@ class SI_Rave extends SI_Offsite_Processors
                                 self::COUNTRY_SOUTHAFRICA => __('South Africa', 'sprout-invoices')
                                 ),
                             'default' => self::$country_code,
-                        ),
+                        )
+                    ),
+                    self::META_NAME => array(
+                        'label' => __('Meta Name (optional)', 'sprout-invoices'),
+                        'option' => array(
+                            'type' => 'text',
+                            'default' => self::$meta_name,
+                        )
+                    ),
+                    self::META_VALUE => array(
+                        'label' => __('Meta Value (optional)', 'sprout-invoices'),
+                        'option' => array(
+                            'type' => 'text',
+                            'default' => self::$meta_value,
+                        )
                     )
                 )
             )
@@ -252,9 +313,29 @@ class SI_Rave extends SI_Offsite_Processors
         $strippedAmount = $payment_amount + 0;
         $currencyCode = self::get_currency_code($invoice_id);
 
+        $metaData = array(['metaname' => self::$meta_name, 'metavalue' => self::$meta_value]);
+
+        switch ($currencyCode) {
+            case 'KES':
+                $country = 'KE';
+                break;
+             case 'GHS':
+                $country = 'GH';
+                break;
+             case 'ZAR':
+                $country = 'ZA';
+                break;
+            
+            default:
+                $country = 'NG';
+                break;
+        }
+    
         $postfields = array();
         $postfields['PBFPubKey'] = $PBFPubKey;
         $postfields['customer_email'] = $user_email;
+        $postfields['custom_title'] = self::$modal_title;
+        $postfields['custom_description'] = self::$modal_desc;
         $postfields['custom_logo'] = self::$logo_url;
         $postfields['customer_phone'] = $phone;
         $postfields['txref'] = $invoice_id . '_' . time();
@@ -274,9 +355,12 @@ class SI_Rave extends SI_Offsite_Processors
         } else {
             $paymentMethod = "card";
         }
+        $postfields['country'] = $country;
         $postfields['payment_options'] = $paymentMethod;
         $postfields['amount'] = $strippedAmount;
         $postfields['currency'] = $currencyCode;
+        $postfields['payment_plan'] = self::$paymentplan_id;
+    
 
         ksort($postfields);
         $stringToHash = "";
@@ -287,7 +371,7 @@ class SI_Rave extends SI_Offsite_Processors
         $stringToHash .= $secretKey;
         $hashedValue = hash('sha256', $stringToHash);
 
-        $transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue));
+        $transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue), array('meta' => $metaData));
         $json = json_encode($transactionData);
         $datas = "";
         foreach ($transactionData as $key => $value) {
@@ -298,7 +382,7 @@ class SI_Rave extends SI_Offsite_Processors
         <script type='text/javascript' src='" . $baseUrl . "/flwv3-pug/getpaidx/api/flwpbf-inline.js'></script>
         <script>
             document.addEventListener('DOMContentLoaded', function pay() {
-            var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue))) . "');
+            var data = JSON.parse('" . json_encode($transactionData = array_merge($postfields, array('integrity_hash' => $hashedValue), array('meta' => $metaData))) . "');
             getpaidSetup(data);}, false);
             console.log('wole');
         </script>
